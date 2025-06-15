@@ -5,7 +5,7 @@ axios.defaults.baseURL = "http://localhost:8089";
 
 export function doGet(url, params) {
     return axios({
-        method: 'GET',
+        method: 'get',
         url: url,
         params: params,
         dataType: "json"
@@ -14,7 +14,7 @@ export function doGet(url, params) {
 
 export function doPost(url, data) {
     return axios({
-        method: 'POST',
+        method: 'post',
         url: url,
         data: data,
         dataType: "json"
@@ -23,7 +23,7 @@ export function doPost(url, data) {
 
 export function doPut(url, data) {
     return  axios({
-        method: 'PUT',
+        method: 'put',
         url: url,
         data: data,
         dataType: "json"
@@ -32,7 +32,7 @@ export function doPut(url, data) {
 
 export function doDelete(url, params) {
     return axios({
-        method: 'DELETE',
+        method: 'delete',
         url: url,
         params: params,
         dataType: "json"

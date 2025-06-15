@@ -14,19 +14,19 @@
         <div class="loginTitle">欢迎登录</div>
         <!--登录表单-->
         <el-form ref="loginRefForm" :rules="loginRules" :model="user" label-width="auto" style="max-width: 600px">
-          <!--账号-->
+          <!--登录账号文本框-->
           <el-form-item  prop="loginAct">
             <el-input placeholder="请输入您的账号" v-model="user.loginAct"/>
           </el-form-item>
-          <!--密码-->
+          <!--登录密码文本框-->
           <el-form-item prop="loginPwd">
             <el-input type="password" show-password placeholder="请输入您的密码" v-model="user.loginPwd" />
           </el-form-item>
-          <!--登录-->
+          <!--登录按钮-->
           <el-form-item>
             <el-button type="primary" round @click="login">登 录</el-button>
           </el-form-item>
-          <!--记住我-->
+          <!--记住我选项框-->
           <el-form-item>
             <el-checkbox label="记住我" v-model="rememberMe"/>
           </el-form-item>
@@ -40,18 +40,22 @@
 import {doPost} from "../http/HttpRequest.js";
 
 export default {
+  // 定义页面使用到的变量
   data() {
     return {
+      // 对象变量定义使用 : {}
       user: {},
+      // 字符串变量定义使用 : ''
       loginAct: '',
       loginPwd: '',
       rememberMe: false,
+      // 定义规则（List集合）使用 : {[],[],[]......}
       loginRules: {
-        // 定义账号的验证规则
+        // 这里是定义账号的验证规则的数组（因为规则可以多个）
         loginAct: [
           { required: true, message: '账号不能为空', trigger: 'blur' },
         ],
-        // 定义密码的验证规则
+        // 这里是定义密码的验证规则
         loginPwd: [
           { required: true, message: '密码不能为空', trigger: 'blur' }
         ],

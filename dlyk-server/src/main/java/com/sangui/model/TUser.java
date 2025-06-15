@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -92,51 +93,65 @@ public class TUser implements UserDetails, Serializable {
      */
     private Date lastLoginTime;
 
-    // 角色List
-    private List<String> roleList;
-    // 权限List
-    private List<String> permissionList;
-
     private static final long serialVersionUID = 1L;
 
+    // 角色 List
+    private List<String> roleList;
+    // 权限标识符 List
+    private List<String> permissionList;
 
     // 实现UserDetails的七个方法
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
-//        this.getRoleList().forEach(role -> {
-//            list.add(new SimpleGrantedAuthority(role))
-//        })
+
+        // 角色
+        this.getRoleList().forEach(role -> {
+            list.add(new SimpleGrantedAuthority(role));
+        });
+
+        // 权限标识符
+        this.getPermissionList().forEach(permission -> {
+            list.add(new SimpleGrantedAuthority(permission));
+        });
+
         return list;
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
-        return "";
+        return this.getLoginPwd();
     }
 
+    @JsonIgnore
     @Override
     public String getUsername() {
-        return "";
+        return this.getLoginAct();
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return this.getAccountNoExpired() == 1;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return this.getAccountNoLocked() == 1;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return this.getCredentialsNoExpired() == 1;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.getAccountEnabled() == 1;
     }
 }

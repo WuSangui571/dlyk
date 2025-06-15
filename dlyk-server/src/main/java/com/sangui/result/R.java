@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 /**
  * @Author: sangui
  * @CreateTime: 2025-05-11
- * @Description: 统一封装web层向前端页面返回的结果
+ * @Description: 统一封装 web 层向前端页面返回的结果，即 VO（View Object）
  * @Version: 1.0
  */
 @Builder
