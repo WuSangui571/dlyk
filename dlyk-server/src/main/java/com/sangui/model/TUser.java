@@ -11,6 +11,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 用户表
@@ -107,15 +108,19 @@ public class TUser implements UserDetails, Serializable {
         List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
 
         // 角色
-        this.getRoleList().forEach(role -> {
-            list.add(new SimpleGrantedAuthority(role));
-        });
+        if (!ObjectUtils.isEmpty(this.getRoleList())){
+            this.getRoleList().forEach(role -> {
+                list.add(new SimpleGrantedAuthority(role));
+            });
+        }
+
 
         // 权限标识符
-        this.getPermissionList().forEach(permission -> {
-            list.add(new SimpleGrantedAuthority(permission));
-        });
-
+        if (!ObjectUtils.isEmpty(this.getPermissionList())){
+            this.getPermissionList().forEach(permission -> {
+                list.add(new SimpleGrantedAuthority(permission));
+            });
+        }
         return list;
     }
 
@@ -130,6 +135,7 @@ public class TUser implements UserDetails, Serializable {
     public String getUsername() {
         return this.getLoginAct();
     }
+
 
     @JsonIgnore
     @Override

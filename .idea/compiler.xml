@@ -7,16 +7,26 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$PROJECT_DIR$/../../../04-ProgramFiles/apache-maven-3.9.9/mvn_resp/org/springframework/boot/spring-boot-configuration-processor/3.4.5/spring-boot-configuration-processor-3.4.5.jar" />
           <entry name="$PROJECT_DIR$/../../../04-ProgramFiles/apache-maven-3.9.9/mvn_resp/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="dlyk-server" />
+      </profile>
+      <profile name="Annotation profile for test-env-jdk21" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$PROJECT_DIR$/../../../04-ProgramFiles/apache-maven-3.9.9/mvn_resp/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+          <entry name="$PROJECT_DIR$/../../../04-ProgramFiles/apache-maven-3.9.9/mvn_resp/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="test-env-jdk21" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="dlyk-server" options="-parameters" />
+      <module name="test-env-jdk21" options="-parameters" />
     </option>
   </component>
 </project>

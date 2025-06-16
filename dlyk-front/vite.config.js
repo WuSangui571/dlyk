@@ -5,8 +5,11 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   server:{
-    host: '0.0.0.0', // ip地址
-    port: 8080, // 设置服务启动端口
-    open: true, // 设置服务启动时是否自动打开浏览器
+    // 设置访问的 ip 地址
+    host: '0.0.0.0',
+    // 设置服务启动端口
+    port: 8080,
+    // 设置为 true 代表服务启动时自动打开浏览器
+    open: true,
   }
 })

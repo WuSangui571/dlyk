@@ -1,4 +1,5 @@
 server:
+  # 设置后端 SpringBoot 端口
   port: 8089
   servlet:
     context-path: /
@@ -12,15 +13,10 @@ spring:
     username: root
     password: 333
     hikari:
-      # 最大连接数，默认是10
       maximum-pool-size: 30
-      # 最小空闲连接，默认是10
       minimum-idle: 30
-      # 等待连接池分配连接的最大时长，超过该时长还没有可用连接则发生超时异常（单位毫秒）
       connection-timeout: 5000
-      # 空闲连接的最大时长，空闲多久就释放回收，设置为0不让连接回收
       idle-timeout: 0
-      # 一个连接的最大生命周期时间，超过该时间还没有使用就回收掉（单位毫秒），最好不要超过8小时
       max-lifetime: 18000000
 
 

@@ -3,7 +3,7 @@
     <el-container>
       <!--左-->
       <el-aside>
-        <img src="../assets/background.jpg"  alt="背景">
+        <img src="../assets/background.jpg" alt="背景">
         <p class="imgTitle">
           欢迎来到三桂管理系统
         </p>
@@ -15,12 +15,12 @@
         <!--登录表单-->
         <el-form ref="loginRefForm" :rules="loginRules" :model="user" label-width="auto" style="max-width: 600px">
           <!--登录账号文本框-->
-          <el-form-item  prop="loginAct">
+          <el-form-item prop="loginAct">
             <el-input placeholder="请输入您的账号" v-model="user.loginAct"/>
           </el-form-item>
           <!--登录密码文本框-->
           <el-form-item prop="loginPwd">
-            <el-input type="password" show-password placeholder="请输入您的密码" v-model="user.loginPwd" />
+            <el-input type="password" show-password placeholder="请输入您的密码" v-model="user.loginPwd"/>
           </el-form-item>
           <!--登录按钮-->
           <el-form-item>
@@ -37,7 +37,10 @@
 </template>
 
 <script>
+// import 区域
 import {doPost} from "../http/HttpRequest.js";
+import {ElMessage} from "element-plus";
+import {messageTip} from "../util/util.js";
 
 export default {
   // 定义页面使用到的变量
@@ -53,11 +56,11 @@ export default {
       loginRules: {
         // 这里是定义账号的验证规则的数组（因为规则可以多个）
         loginAct: [
-          { required: true, message: '账号不能为空', trigger: 'blur' },
+          {required: true, message: '账号不能为空', trigger: 'blur'},
         ],
         // 这里是定义密码的验证规则
         loginPwd: [
-          { required: true, message: '密码不能为空', trigger: 'blur' }
+          {required: true, message: '密码不能为空', trigger: 'blur'}
         ],
       },
     }
@@ -73,43 +76,57 @@ export default {
           formData.append("loginAct", this.user.loginAct);
           formData.append("loginPwd", this.user.loginPwd);
           doPost("/api/login", formData).then((resp) => {
-            console.log(resp);
+            if (resp.data.code === 200) {
+              // 登陆成功
+              messageTip("登录成功，欢迎回来！", "success");
+              // 跳转到系统的主页面
+              window.location.href = "/dashboard";
+            } else {
+              // 登录失败
+              messageTip("登录失败，账号或密码错误！", "error");
+            }
           });
         }
       })
-
     }
+
   }
 }
 </script>
 
 <style scoped>
-.el-button{
+.el-button {
   width: 100%;
 }
-.loginTitle{
+
+.loginTitle {
   width: 83%;
   margin: 190px auto auto;
   font-weight: bold;
 }
-.el-form{
+
+.el-form {
   margin-top: 20px;
   width: 25%;
 }
-.el-aside{
+
+.el-aside {
   background: #f9f9f9;
   width: 43.832237%;
-  text-align : center;
+  text-align: center;
 }
-.el-main{
+
+.el-main {
   background: #f9f9f9;
   height: calc(100vh);
 }
-img{
+
+img {
   margin-top: 150px;
   height: 400px;
 }
-.imgTitle{
+
+.imgTitle {
   color: #1a1a1a;
   font-size: 28px;
 }

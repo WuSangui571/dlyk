@@ -5,6 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/dlyk-server/pom.xml" />
+        <option value="$PROJECT_DIR$/test-env-jdk21/pom.xml" />
       </list>
     </option>
   </component>
