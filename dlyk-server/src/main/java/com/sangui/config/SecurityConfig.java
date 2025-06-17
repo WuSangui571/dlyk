@@ -26,6 +26,14 @@ import java.util.Arrays;
  */
 @Configuration
 public class SecurityConfig {
+    // 后端验证登录的 URL
+    private final String LOGIN_URL = "/api/login";
+    // 在 user 表中，登录账号的属性名
+    private final String NAME_OF_USERNAME_IN_USER = "loginAct";
+    // 在 user 表中，密码的属性名
+    private final String NAME_OF_PASSWORD_IN_USER = "loginPwd";
+
+
     @Resource
     private MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
 
@@ -41,15 +49,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,CorsConfigurationSource corsConfigurationSource) throws Exception {
         // 禁用跨站请求伪造
         return httpSecurity.formLogin((formLogin)->{
-            formLogin.loginProcessingUrl("/api/login")
-                    .usernameParameter("loginAct")
-                    .passwordParameter("loginPwd")
+            formLogin.loginProcessingUrl(LOGIN_URL)
+                    .usernameParameter(NAME_OF_USERNAME_IN_USER)
+                    .passwordParameter(NAME_OF_PASSWORD_IN_USER)
                     .successHandler(myAuthenticationSuccessHandler)
                     .failureHandler(myAuthenticationFailureHandler);
         })
         .authorizeHttpRequests((authorize)->{
             // 任何请求都需要登录后才能访问，除了"/api/login"
-            authorize.requestMatchers("/api/login").permitAll()
+            authorize.requestMatchers(LOGIN_URL).permitAll()
                     .anyRequest().authenticated();
         })
         // 方法引用 禁用跨站请求伪造

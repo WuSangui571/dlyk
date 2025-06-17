@@ -2,12 +2,17 @@
 
   <el-container>
     <!--左：side bar-->
-    <el-aside width="200px">
+    <el-aside :width="isCollapse ?'64px':'200px'">
+        <div class="menuTittle">@三桂管理系统</div>
         <el-menu
             default-active="2"
             class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
+            style="border-right: 0 px solid var(--el-menu-border-color);"
+            :unique-opened="true"
+
+            :collapse="isCollapse"
+            :collapse-transition="false"
+
         >
           <el-sub-menu index="1">
             <template #title>
@@ -100,7 +105,21 @@
     <!--右：网站主体，包含 上 中 下 -->
     <el-container class="rightContainer">
       <!--上：head-->
-      <el-header>Header</el-header>
+      <el-header>
+        <el-icon class="switch-button" @click="showMenu"><Switch /></el-icon>
+        <el-dropdown :hide-on-click="false">
+          <span class="el-dropdown-link">
+            张三<el-icon class="el-icon--right"><arrow-down/></el-icon>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item>个人资料</el-dropdown-item>
+              <el-dropdown-item>修改密码</el-dropdown-item>
+              <el-dropdown-item divided>退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </el-header>
       <!--中：网站主要信息-->
       <el-main>Main</el-main>
       <!--下：版权信息-->
@@ -115,18 +134,52 @@ import {defineComponent} from 'vue'
 import {User} from "@element-plus/icons-vue";
 
 export default defineComponent({
-name: "Dashboard",
+  name: "DashboardView",
+  data(){
+    return {
+      // false 菜单不折叠。true 菜单折叠
+      isCollapse: false,
+    }
+  },
+  // vue 的生命周期中的一个函数钩子
+  mounted(){
+    
+  }
+  methods:{
+    showMenu(){
+      this.isCollapse = !this.isCollapse
+    }
+  },
   components: {User}
 })
 </script>
 
 <style scoped>
+.el-dropdown-item{
+  font-size: 12px;
+}
+.el-dropdown{
+  float: right;
+  height: 35px;
+  line-height: 35px;
+  font-size: 12px;
+}
+.switch-button{
+  cursor:pointer;
+}
+.menuTittle{
+  text-align: center;
+  height: 35px;
+  line-height: 35px;
+  background-color: white;
+}
 .el-aside {
   background-color: #f9f9f9;
 }
 .el-header {
   background-color: white;
-  height: 40px;
+  height: 35px;
+  line-height: 35px;
 }
 .el-main {
   background-color: #f9f9f9;
