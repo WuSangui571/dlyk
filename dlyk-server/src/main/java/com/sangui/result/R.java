@@ -47,4 +47,11 @@ public class R {
                 .msg(msg)
                 .build();
     }
+
+    public static R FAIL(CodeEnum codeEnum) {
+        return R.builder()
+                .code(codeEnum.getCode())
+                .msg(codeEnum.getMsg())
+                .build();
+    }
 }

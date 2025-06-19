@@ -132,6 +132,7 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
 import {User} from "@element-plus/icons-vue";
+import {doGet} from "../http/HttpRequest.js";
 
 export default defineComponent({
   name: "DashboardView",
@@ -142,12 +143,19 @@ export default defineComponent({
     }
   },
   // vue 的生命周期中的一个函数钩子
+  // mounted 函数代表页面渲染后执行 mounted 里的代码
   mounted(){
-    
-  }
+    // 加载当前登录用户
+    this.loadLoginUser();
+  },
   methods:{
     showMenu(){
       this.isCollapse = !this.isCollapse
+    },
+    loadLoginUser(){
+      doGet("api/login/info",{}).then((resp) =>{
+        console.log(resp)
+      })
     }
   },
   components: {User}

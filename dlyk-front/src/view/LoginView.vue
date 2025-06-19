@@ -28,7 +28,7 @@
           </el-form-item>
           <!--记住我选项框-->
           <el-form-item>
-            <el-checkbox label="记住我" v-model="rememberMe"/>
+            <el-checkbox label="记住我" v-model="user.rememberMe"/>
           </el-form-item>
         </el-form>
       </el-main>
@@ -40,7 +40,7 @@
 // import 区域
 import {doPost} from "../http/HttpRequest.js";
 import {ElMessage} from "element-plus";
-import {messageTip} from "../util/util.js";
+import {getTokenName, messageTip, removeToken} from "../util/util.js";
 
 export default {
   // 定义页面使用到的变量
@@ -75,10 +75,21 @@ export default {
           let formData = new FormData();
           formData.append("loginAct", this.user.loginAct);
           formData.append("loginPwd", this.user.loginPwd);
+          formData.append("rememberMe", this.user.rememberMe);
+
           doPost("/api/login", formData).then((resp) => {
             if (resp.data.code === 200) {
               // 登陆成功
               messageTip("登录成功，欢迎回来！", "success");
+              // 删除一下历史localStorage 和 sessionStorage 存储的 token
+              removeToken();
+
+              // 前端存储 jwt
+              if (this.user.rememberMe === true){
+                window.localStorage.setItem(getTokenName(),resp.data.data)
+              }else {
+                window.sessionStorage.setItem(getTokenName(), resp.data.data)
+              }
               // 跳转到系统的主页面
               window.location.href = "/dashboard";
             } else {

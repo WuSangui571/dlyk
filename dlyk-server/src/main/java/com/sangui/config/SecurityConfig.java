@@ -1,6 +1,7 @@
 package com.sangui.config;
 
 
+import com.sangui.config.filter.TokenVerifyFilter;
 import com.sangui.config.handler.MyAuthenticationFailureHandler;
 import com.sangui.config.handler.MyAuthenticationSuccessHandler;
 import jakarta.annotation.Resource;
@@ -8,14 +9,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+
+import static com.sangui.constant.Constants.LOGIN_URI;
 
 
 /**
@@ -26,13 +31,13 @@ import java.util.Arrays;
  */
 @Configuration
 public class SecurityConfig {
-    // 后端验证登录的 URL
-    private final String LOGIN_URL = "/api/login";
     // 在 user 表中，登录账号的属性名
     private final String NAME_OF_USERNAME_IN_USER = "loginAct";
     // 在 user 表中，密码的属性名
     private final String NAME_OF_PASSWORD_IN_USER = "loginPwd";
 
+    @Resource
+    TokenVerifyFilter tokenVerifyFilter;
 
     @Resource
     private MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
@@ -46,18 +51,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,CorsConfigurationSource corsConfigurationSource) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, CorsConfigurationSource corsConfigurationSource, TokenVerifyFilter tokenVerifyFilter) throws Exception {
         // 禁用跨站请求伪造
         return httpSecurity.formLogin((formLogin)->{
-            formLogin.loginProcessingUrl(LOGIN_URL)
+            formLogin.loginProcessingUrl(LOGIN_URI)
                     .usernameParameter(NAME_OF_USERNAME_IN_USER)
                     .passwordParameter(NAME_OF_PASSWORD_IN_USER)
                     .successHandler(myAuthenticationSuccessHandler)
                     .failureHandler(myAuthenticationFailureHandler);
         })
         .authorizeHttpRequests((authorize)->{
-            // 任何请求都需要登录后才能访问，除了"/api/login"
-            authorize.requestMatchers(LOGIN_URL).permitAll()
+            // 任何请求都需要登录后才能访问，除了 LOGIN_URI = "/api/login"
+            authorize.requestMatchers(LOGIN_URI).permitAll()
                     .anyRequest().authenticated();
         })
         // 方法引用 禁用跨站请求伪造
@@ -66,6 +71,15 @@ public class SecurityConfig {
         .cors((cors) ->{
             cors.configurationSource(corsConfigurationSource);
         })
+
+        .sessionManagement((session) ->{
+            // Session 创建策略，无 Session 状态
+            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        })
+
+        // 添加自定义 Filter
+        .addFilterBefore(tokenVerifyFilter, LogoutFilter.class)
+
         .build();
     }
 
