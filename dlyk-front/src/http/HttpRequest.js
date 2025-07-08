@@ -24,7 +24,7 @@ export function doPost(url, data) {
 }
 
 export function doPut(url, data) {
-    return  axios({
+    return axios({
         method: 'put',
         url: url,
         data: data,
@@ -42,7 +42,7 @@ export function doDelete(url, params) {
 }
 
 // 添加请求拦截器
-axios.interceptors.request.use( (config) => {
+axios.interceptors.request.use((config) => {
     // 在发送请求之前做些什么，在请求头中放一个token（jwt），传给后端接口
     let token = window.sessionStorage.getItem(getTokenName());
     if (!token) { //前面加了一个！，表示token不存在，token是空的，token没有值，这个意思
@@ -55,19 +55,28 @@ axios.interceptors.request.use( (config) => {
         config.headers['Authorization'] = token;
     }
     return config;
-},  (error) => {
+}, (error) => {
     // 对请求错误做些什么
     return Promise.reject(error);
 });
 
 // 添加响应拦截器
-axios.interceptors.response.use( (response) => {
+axios.interceptors.response.use((response) => {
     // 2xx 范围内的状态码都会触发该函数。
     // 对响应数据做点什么，拦截 token 验证的结果，进行相应的提示和页面跳转
     if (response.data.code > 900) { // code 大于900说明是token验证未通过
         //给前端用户提示，并且跳转页面
-        messageConfirm(response.data.msg + "，是否重新去登录？")
-        return ;
+        messageConfirm(response.data.msg + "，是否重新去登录？").then(() => { // 若点击"确定"按钮，走这个
+            // 既然后端验证 token 未通过，token 是非法的，删除 token 先
+            removeToken();
+            // 跳到登录页
+            window.location.href = ("/");
+        })
+            // 若点击"取消"按钮，走这个
+            .catch(() => {
+                messageTip("已取消去登录！", "warning")
+            })
+        return;
     }
     return response;
 }, function (error) {

@@ -6,8 +6,9 @@ import com.sangui.model.TUser;
 import com.sangui.result.CodeEnum;
 import com.sangui.result.R;
 import com.sangui.service.RedisService;
-import com.sangui.util.JSONUtils;
-import com.sangui.util.JWTUtils;
+import com.sangui.util.JsonUtils;
+import com.sangui.util.JwtUtils;
+import com.sangui.util.JsonUtils;
 import com.sangui.util.ResponseUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
@@ -24,6 +25,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import static com.sangui.config.SecurityConfig.LOGIN_URI;
+
 
 /**
  * @author sangui
@@ -34,14 +37,14 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
     @Resource
     private RedisService redisService;
 
-    // spring boot框架的 IoC 容器中已经创建好了该线程池，可以注入直接使用
+    // SpringBoot 框架的 IoC 容器中已经创建好了该线程池，可以注入直接使用
     @Resource
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 如果是登录请求，此时还没有生成 jwt，那不需要对登录请求进行 jwt 验证
-        if (request.getRequestURI().equals(Constants.LOGIN_URI)) {
+        if (request.getRequestURI().equals(LOGIN_URI)) {
             //验证 jwt 通过了 ，让 Filter 链继续执行，也就是继续执行下一个Filter
             filterChain.doFilter(request, response);
         } else {
@@ -56,34 +59,34 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
 
             if (!StringUtils.hasText(token)) {
                 // token 验证未通过的统一结果
-                R result = R.FAIL(CodeEnum.TOKEN_IS_EMPTY);
+                R result = R.fail(CodeEnum.TOKEN_IS_EMPTY);
                 // 把 R 对象转成 json
-                String resultJSON = JSONUtils.toJSON(result);
+                String resultJSON = JsonUtils.toJson(result);
                 // 把 R 以 json 返回给前端
                 ResponseUtils.write(response, resultJSON);
                 return;
             }
 
             // 验证 token 有没有被篡改过
-            if (!JWTUtils.verifyJWT(token)) {
+            if (!JwtUtils.verifyJwt(token)) {
                 // token 验证未通过统一结果
-                R result = R.FAIL(CodeEnum.TOKEN_IS_ERROR);
+                R result = R.fail(CodeEnum.TOKEN_IS_ERROR);
                 // 把 R 对象转成 json
-                String resultJSON = JSONUtils.toJSON(result);
+                String resultJSON = JsonUtils.toJson(result);
                 //把 R 以 json 返回给前端
                 ResponseUtils.write(response, resultJSON);
                 return;
             }
 
-            TUser tUser = JWTUtils.parseUserFromJWT(token);
+            TUser tUser = JwtUtils.parseUserFromJWT(token);
             String redisToken = (String) redisService.getValue(Constants.REDIS_JWT_KEY + tUser.getId());
 
             if (!StringUtils.hasText(redisToken)) {
                 // token 验证未通过统一结果
-                R result = R.FAIL(CodeEnum.TOKEN_IS_EXPIRED);
+                R result = R.fail(CodeEnum.TOKEN_IS_EXPIRED);
 
                 //把 R 对象转成 json
-                String resultJSON = JSONUtils.toJSON(result);
+                String resultJSON = JsonUtils.toJson(result);
 
                 //把 R 以 json返回给前端
                 ResponseUtils.write(response, resultJSON);
@@ -93,10 +96,10 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
 
             if (!token.equals(redisToken)) {
                 // token 验证未通过的统一结果
-                R result = R.FAIL(CodeEnum.TOKEN_IS_NONE_MATCH);
+                R result = R.fail(CodeEnum.TOKEN_IS_NONE_MATCH);
 
                 //把R对象转成 json
-                String resultJSON = JSONUtils.toJSON(result);
+                String resultJSON = JsonUtils.toJson(result);
 
                 //把 R 以 json 返回给前端
                 ResponseUtils.write(response, resultJSON);
@@ -107,18 +110,8 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(tUser, tUser.getLoginPwd(), tUser.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-            //刷新一下 token（异步处理，new一个线程去执行）
-            /*new Thread(() -> {
-                // 刷新 token
-                String rememberMe = request.getHeader("rememberMe");
-                if (Boolean.parseBoolean(rememberMe)) {
-                    redisService.expire(Constants.REDIS_JWT_KEY + tUser.getId(), Constants.EXPIRE_TIME, TimeUnit.SECONDS);
-                } else {
-                    redisService.expire(Constants.REDIS_JWT_KEY + tUser.getId(), Constants.DEFAULT_EXPIRE_TIME, TimeUnit.SECONDS);
-                }
-            }).start();*/
-
-            //异步处理（更好的方式，使用线程池去执行）
+            //刷新一下 token（异步处理）
+            // 异步处理（更好的方式，使用线程池去执行）
             threadPoolTaskExecutor.execute(() -> {
                 // 刷新 token
                 String rememberMe = request.getHeader("rememberMe");

@@ -20,9 +20,15 @@ public class UserController {
      * @param authentication 认证
      * @return 封装好的 R 返回信息
      */
-    @GetMapping("api/login/info")
+    @GetMapping("/api/login/info")
     public R loginInfo(Authentication authentication){
         TUser tUser = (TUser) authentication.getPrincipal();
-        return R.OK(tUser);
+        return R.ok(tUser);
+    }
+
+    @GetMapping("/api/login/free")
+    public R freeLogin(){
+        // TokenVerifyFilter 会自动验证，这里不需要验证
+        return  R.ok();
     }
 }

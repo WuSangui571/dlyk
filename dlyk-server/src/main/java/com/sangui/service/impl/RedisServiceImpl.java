@@ -7,6 +7,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @Author: sangui
+ * @CreateTime: 2025-06-15
+ * @Description: RedisServiceImpl
+ * @Version: 1.0
+ */
 @Service
 public class RedisServiceImpl implements RedisService {
 
@@ -24,12 +30,12 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public Boolean removeValue(String key) {
-        return redisTemplate.delete(key);
+    public void removeValue(String key) {
+        redisTemplate.delete(key);
     }
 
     @Override
-    public Boolean expire(String key, Long timeOut, TimeUnit timeUnit) {
-        return redisTemplate.expire(key, timeOut, timeUnit);
+    public void expire(String key, Long timeOut, TimeUnit timeUnit) {
+        redisTemplate.expire(key, timeOut, timeUnit);
     }
 }

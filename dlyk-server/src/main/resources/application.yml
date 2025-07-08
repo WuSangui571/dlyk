@@ -20,7 +20,7 @@ spring:
       max-lifetime: 18000000
 
 
-# 配置redis的连接信息
+# 配置 Redis 的连接信息
 data:
   redis:
     host: 127.0.0.1
@@ -28,6 +28,6 @@ data:
     password:
     database:
 
-# 指定以下mapper.xml文件的位置
+# 指定以下 mapper.xml 文件的位置
 mybatis:
   mapper-locations: classpath:mapper/*.xml

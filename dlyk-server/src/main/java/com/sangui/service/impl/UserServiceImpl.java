@@ -24,10 +24,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // 查询对应 username 的 tUser 实体
         TUser tUser = tUserMapper.selectByLoginAct(username);
+        // 验证此 tUser 实体
         if (tUser == null) {
+            // 若找不到 tUser，则抛出异常
             throw new UsernameNotFoundException("登录账号不存在！");
         }
+        // 返回正确的 tUser
         return tUser;
     }
 }

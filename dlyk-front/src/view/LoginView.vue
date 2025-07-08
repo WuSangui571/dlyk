@@ -38,7 +38,7 @@
 
 <script>
 // import 区域
-import {doPost} from "../http/HttpRequest.js";
+import {doGet, doPost} from "../http/HttpRequest.js";
 import {ElMessage} from "element-plus";
 import {getTokenName, messageTip, removeToken} from "../util/util.js";
 
@@ -64,6 +64,10 @@ export default {
         ],
       },
     }
+  },
+  // 页面渲染完 dom 元素后会触发调用该函数（函数钩子）
+  mounted() {
+    this.freeLogin();
   },
   methods: {
     // 登录函数
@@ -99,8 +103,23 @@ export default {
           });
         }
       })
+    },
+    // 免登录函数（自动登录）
+    freeLogin(){
+      // 检查有没有选择记住我，（通过检查是否有 token 来检查之前是否有选择记住我）
+      let token = window.localStorage.getItem(getTokenName());
+      // 判断 token 是否有值
+      if (token){
+        doGet("/api/login/free",{}).then(resp =>{
+          if (resp.data.code === 200){
+            // token 验证通过，可以免登录
+            window.location.href = "/dashboard";
+          }else {
+            // token 错误
+          }
+        })
+      }
     }
-
   }
 }
 </script>

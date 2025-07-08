@@ -13,19 +13,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * jwt工具类
- *
+ * @Author: sangui
+ * @CreateTime: 2025-05-11
+ * @Description: jwt 工具类
+ * @Version: 1.0
  */
-public class JWTUtils {
-
+public class JwtUtils {
+    /**
+     * 自定义的密钥
+     */
     public static final String SECRET = "dY8300olWQ3345;1d<3w48";
 
+
     /**
-     * 生成JWT （token）
-     *
+     * 生成 jwt，即 token
+     * @param userJson tUser 对象的 json
+     * @return 返回 jwt，即 token
      */
-    public static String createJWT(String userJSON) {
-        //组装头数据
+    public static String createJwt(String userJson) {
+        // 组装头数据
         Map<String, Object> header = new HashMap<>();
         header.put("alg", "HS256");
         header.put("typ", "JWT");
@@ -33,25 +39,23 @@ public class JWTUtils {
         return JWT.create()
                 //头部
                 .withHeader(header)
-
                 //负载
-                .withClaim("user", userJSON)
-
+                .withClaim("user", userJson)
                 //签名
                 .sign(Algorithm.HMAC256(SECRET));
     }
 
     /**
-     * 验证JWT
-     *
-     * @param jwt 要验证的jwt的字符串
+     * 验证 jwt
+     * @param jwt 验证的 jwt 的字符串
+     * @return jwt 是否正确
      */
-    public static Boolean verifyJWT(String jwt) {
+    public static Boolean verifyJwt(String jwt) {
         try {
-            // 使用秘钥创建一个 JWT 验证器对象
+            // 使用秘钥创建一个 jwt 验证器对象
             JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(SECRET)).build();
 
-            //验证 JWT ，如果没有抛出异常，说明验证通过，否则验证不通过
+            //验证 jwt ，如果没有抛出异常，说明验证通过，否则验证不通过
             jwtVerifier.verify(jwt);
 
             return true;
@@ -105,7 +109,7 @@ public class JWTUtils {
 
             String userJSON = userClaim.asString();
 
-            return JSONUtils.toBean(userJSON, TUser.class);
+            return JsonUtils.toBean(userJSON, TUser.class);
         } catch (TokenExpiredException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

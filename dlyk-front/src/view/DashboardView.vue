@@ -109,13 +109,14 @@
         <el-icon class="switch-button" @click="showMenu"><Switch /></el-icon>
         <el-dropdown :hide-on-click="false">
           <span class="el-dropdown-link">
-            张三<el-icon class="el-icon--right"><arrow-down/></el-icon>
+            {{ user.loginAct }}
+            <el-icon class="el-icon--right"><arrow-down/></el-icon>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>个人资料</el-dropdown-item>
               <el-dropdown-item>修改密码</el-dropdown-item>
-              <el-dropdown-item divided>退出登录</el-dropdown-item>
+              <el-dropdown-item divided @click="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -133,6 +134,7 @@
 import {defineComponent} from 'vue'
 import {User} from "@element-plus/icons-vue";
 import {doGet} from "../http/HttpRequest.js";
+import {messageConfirm, messageTip, removeToken} from "../util/util";
 
 export default defineComponent({
   name: "DashboardView",
@@ -140,6 +142,9 @@ export default defineComponent({
     return {
       // false 菜单不折叠。true 菜单折叠
       isCollapse: false,
+      // 登录用户对象
+      user:{},
+      // name:""
     }
   },
   // vue 的生命周期中的一个函数钩子
@@ -154,7 +159,25 @@ export default defineComponent({
     },
     loadLoginUser(){
       doGet("api/login/info",{}).then((resp) =>{
+        this.user = resp.data.data
         console.log(resp)
+      })
+    },
+    logout(){
+      doGet("/api/logout",{}).then(resp =>{
+        if (resp.data.code === 200){
+          // 退出成功
+          removeToken();
+          messageTip("退出成功","success")
+          window.location.href = "/"
+        } else {
+          messageConfirm("退出异常，是否强制退出？").then(() =>{
+            removeToken();
+            window.location.href = "/"
+          }).catch(() =>{
+            messageTip("取消强制退出","warning")
+          })
+        }
       })
     }
   },

@@ -40,8 +40,13 @@ export function removeToken(){
     window.sessionStorage.removeItem(getTokenName());
 }
 
+/**
+ * 消息确认函数
+ * @param msg 消息信息详情
+ * @returns {Promise<MessageBoxData>}
+ */
 export function messageConfirm(msg){
-    ElMessageBox.confirm(
+    return ElMessageBox.confirm(
         msg,
         'Warning',
         {
@@ -49,12 +54,5 @@ export function messageConfirm(msg){
             cancelButtonText: '取消',
             type: 'warning',
         }
-    ).then(() => { // 若点击"确定"按钮，走这个
-            // 跳到登录页
-            window.location.href = ("/");
-        })
-        // 若点击"取消"按钮，走这个
-        .catch(() => {
-            messageTip("111已取消去登录！","warning")
-        })
+    )
 }
