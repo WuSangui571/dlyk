@@ -33,10 +33,13 @@ import java.util.List;
 public class SecurityConfig {
     // 静态文本，后端处理登录的登录地址
     public static final String LOGIN_URI = "/api/login";
+    // 静态文本，后端处理退出登录的地址
+    private static final String LOGOUT_URI = "/api/logout";
     // 静态文本，是在 tUser 实体类中，登录账号的属性名
-    private final String NAME_OF_USERNAME_IN_TUSER = "loginAct";
+    private static final String NAME_OF_USERNAME_IN_TUSER = "loginAct";
     // 静态文本，是在 tUser 实体类中，密码的属性名
-    private final String NAME_OF_PASSWORD_IN_TUSER = "loginPwd";
+    private static final String NAME_OF_PASSWORD_IN_TUSER = "loginPwd";
+
 
     @Resource
     TokenVerifyFilter tokenVerifyFilter;
@@ -53,6 +56,7 @@ public class SecurityConfig {
     // 将加密器纳入 IoC 容器
     @Bean
     public PasswordEncoder passwordEncoder(){
+        // 返回默认的 BCrypt 加密器
         return new BCryptPasswordEncoder();
     }
 
@@ -67,7 +71,7 @@ public class SecurityConfig {
         // 设置运行的请求头
         corsConfiguration.setAllowedHeaders(List.of("*"));
 
-        // 选择 UrlBasedCorsConfigurationSource 的实现
+        // 选择 UrlBasedCorsConfigurationSource 作为返回的具体实现
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         // 设置该 source 的配置，并且它的匹配路径是多级目录
         source.registerCorsConfiguration("/**",corsConfiguration);
@@ -107,9 +111,10 @@ public class SecurityConfig {
                     cors.configurationSource(corsConfigurationSource);
                 })
 
-                .sessionManagement((session) ->{
-                    // Session 创建策略，无 Session 状态
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                // 设置禁用 Session
+                .sessionManagement((sessionManagement) ->{
+                    // Session 创建策略，设置为无 Session 状态
+                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
 
                 // 添加自定义 Filter
@@ -117,7 +122,7 @@ public class SecurityConfig {
 
                 // 退出登录
                 .logout((logout) ->{
-                    logout.logoutUrl("/api/logout")
+                    logout.logoutUrl(LOGOUT_URI)
                             .logoutSuccessHandler(myLogoutSuccessHandler);
                 })
 
