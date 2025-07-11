@@ -4,16 +4,15 @@
     <!--左：side bar-->
     <el-aside :width="isCollapse ?'64px':'200px'">
         <div class="menuTittle">@三桂管理系统</div>
+        <!--其中的 :router="true" 代表 开启路由模式，可在 index 中添加路径-->
         <el-menu
             default-active="2"
             class="el-menu-vertical-demo"
             style="border-right: 0 px solid var(--el-menu-border-color);"
             :unique-opened="true"
-
+            :router="true"
             :collapse="isCollapse"
-            :collapse-transition="false"
-
-        >
+            :collapse-transition="false">
           <el-sub-menu index="1">
             <template #title>
               <el-icon><OfficeBuilding /></el-icon>
@@ -84,7 +83,8 @@
               <el-icon><UserFilled /></el-icon>
               <span>用户</span>
             </template>
-            <el-menu-item index="7-1">
+            <!--<el-menu-item index="7-1">-->
+            <el-menu-item index="/dashboard/user">
               <el-icon><CreditCard /></el-icon>
               用户管理
             </el-menu-item>
@@ -122,7 +122,10 @@
         </el-dropdown>
       </el-header>
       <!--中：网站主要信息-->
-      <el-main>Main</el-main>
+      <el-main>
+        <!-- router-view 标签就是根据路由去显示的-->
+        <router-view/>
+      </el-main>
       <!--下：版权信息-->
       <el-footer>Copyright © 2025 三桂管理系统 All rights reserved. <a href="https://beian.miit.gov.cn/" target="_blank">浙ICP备2025167176号</a></el-footer>
     </el-container>

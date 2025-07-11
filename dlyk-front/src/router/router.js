@@ -19,6 +19,16 @@ let router = createRouter({
             path: "/dashboard",
             // 路由路径所对应的页面
             component: () => import("../view/DashboardView.vue"),
+            // 配置子路由，
+            children : [
+                // 每一个子路由由一对大括号分割
+                {
+                    // 子路由路径，不能以斜杠开头，其实是 /dashboard/user
+                    path: "user",
+                    // 路由路径所对应的页面
+                    component: () => import("../view/UserView.vue"),
+                }
+            ]
         },
     ],
 })
