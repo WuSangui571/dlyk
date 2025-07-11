@@ -18,6 +18,11 @@ spring:
       connection-timeout: 5000
       idle-timeout: 0
       max-lifetime: 18000000
+  jackson:
+    # 设置 jackson 返回 json 格式的时间的格式。
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH :mm:ss
+
 
 
 # 配置 Redis 的连接信息

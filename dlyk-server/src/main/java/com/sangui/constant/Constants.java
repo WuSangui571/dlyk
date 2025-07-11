@@ -19,7 +19,7 @@ public class Constants {
     public static final Long DEFAULT_EXPIRE_TIME = 30 * 60L;
 
     //分页时每页显示10条数据
-//    public static final int PAGE_SIZE = 10;
+    public static final int PAGE_SIZE = 10;
 
     //请求token的名称
 //    public static final String TOKEN_NAME = "Authorization";

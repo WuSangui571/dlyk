@@ -1,11 +1,18 @@
 package com.sangui.web;
 
 
+import com.github.pagehelper.PageInfo;
 import com.sangui.model.TUser;
 import com.sangui.result.R;
+import com.sangui.service.UserService;
+import jakarta.annotation.Resource;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @Author: sangui
@@ -15,6 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class UserController {
+    @Resource
+    private UserService userService;
+
     /**
      * 获取登录人信息
      * @param authentication 认证
@@ -30,5 +40,14 @@ public class UserController {
     public R freeLogin(){
         // TokenVerifyFilter 会自动验证，这里不需要验证
         return  R.ok();
+    }
+
+    @GetMapping("/api/users")
+    public R userPage(@RequestParam(value = "current",required = false) Integer current){
+        if (current == null){
+            current = 1;
+        }
+        PageInfo<TUser> pageInfo = userService.getUserByPage(current);
+        return R.ok(pageInfo);
     }
 }

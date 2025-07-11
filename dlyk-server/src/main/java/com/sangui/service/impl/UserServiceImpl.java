@@ -1,6 +1,8 @@
 package com.sangui.service.impl;
 
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.sangui.mapper.TUserMapper;
 import com.sangui.model.TUser;
 import com.sangui.model.TUserRole;
@@ -10,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static com.sangui.constant.Constants.PAGE_SIZE;
 
 /**
  * @Author: sangui
@@ -21,6 +27,13 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     @Resource
     TUserMapper tUserMapper;
+
+    @Override
+    public PageInfo<TUser> getUserByPage(Integer current) {
+        PageHelper.startPage(current,PAGE_SIZE);
+        List<TUser> list = tUserMapper.selectUserByPage();
+        return new PageInfo<>(list);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

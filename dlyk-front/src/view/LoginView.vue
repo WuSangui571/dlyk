@@ -38,7 +38,7 @@
 
 <script>
 // import 区域
-import {doGet, doPost} from "../http/HttpRequest.js";
+import  {doGet, doPost} from "../http/HttpRequest.js";
 import {ElMessage} from "element-plus";
 import {getTokenName, messageTip, removeToken} from "../util/util.js";
 
