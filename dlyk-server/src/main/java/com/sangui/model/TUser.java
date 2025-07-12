@@ -102,6 +102,16 @@ public class TUser implements UserDetails, Serializable {
     // 权限标识符 List
     private List<String> permissionList;
 
+    /**
+     * 一对一映射
+     */
+    private TUser createByDo;
+
+    /**
+     * 
+     */
+    private TUser editByDo;
+
     // 实现 UserDetails 的七个方法
     // 使用 @JsonIgnore 注解，使在生成的对象转化为 json 时忽略这个字段（若不写，json 中会自动生成 authorities 字段），下面七个方法同理
     @JsonIgnore
