@@ -36,6 +36,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public TUser getUserById(Integer id) {
+        return tUserMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 查询对应 username 的 tUser 实体
         TUser tUser = tUserMapper.selectByLoginAct(username);

@@ -28,6 +28,13 @@ let router = createRouter({
                     // 路由路径所对应的页面
                     component: () => import("../view/UserView.vue"),
                 },
+                {
+                    // 以 : 开头的路径，是动态路径，这里的 :id 就是动态路径
+                    path: "user/:id",
+                    // 路由路径所对应的页面
+                    component: () => import("../view/UserDetail.vue"),
+                },
+
 
             ]
         },

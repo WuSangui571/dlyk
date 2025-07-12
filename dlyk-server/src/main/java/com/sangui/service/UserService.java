@@ -18,4 +18,11 @@ public interface UserService extends UserDetailsService {
      * @param current 页码
      */
     PageInfo<TUser> getUserByPage(Integer current);
+
+    /**
+     * 根据用户 id 查询用户信息
+     * @param id 用户 id
+     * @return 用户对象
+     */
+    TUser getUserById(Integer id);
 }

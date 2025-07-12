@@ -163,7 +163,7 @@ export default defineComponent({
     loadLoginUser(){
       doGet("api/login/info",{}).then((resp) =>{
         this.user = resp.data.data
-        console.log(resp)
+        // console.log(resp)
       })
     },
     logout(){
