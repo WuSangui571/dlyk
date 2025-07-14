@@ -3,6 +3,7 @@ package com.sangui.service;
 
 import com.github.pagehelper.PageInfo;
 import com.sangui.model.TUser;
+import com.sangui.query.UserQuery;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
@@ -33,4 +34,10 @@ public interface UserService extends UserDetailsService {
      */
     TUser getUserDetailById(Integer id);
 
+    /**
+     * 保存用户
+     * @param userQuery 前端传给后端的 user 对象
+     * @return 改变数据库的条数
+     */
+    int saveUser(UserQuery userQuery);
 }

@@ -51,7 +51,7 @@ axios.interceptors.request.use((config) => {
             config.headers['rememberMe'] = true;
         }
     }
-    if (token) { //表示token存在，token不是空的，token有值，这个意思
+    if (token) { // 表示 token 存在，token不是空的，token有值，这个意思
         config.headers['Authorization'] = token;
     }
     return config;

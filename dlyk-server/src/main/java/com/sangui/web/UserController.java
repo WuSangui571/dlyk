@@ -3,14 +3,12 @@ package com.sangui.web;
 
 import com.github.pagehelper.PageInfo;
 import com.sangui.model.TUser;
+import com.sangui.query.UserQuery;
 import com.sangui.result.R;
 import com.sangui.service.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -56,5 +54,11 @@ public class UserController {
         // TUser tUser = userService.getUserById(id);
         TUser tUser = userService.getUserDetailById(id);
         return R.ok(tUser);
+    }
+
+    @PostMapping("/api/user")
+    public R addUser(@RequestBody UserQuery userQuery){
+        int count = userService.saveUser(userQuery);
+        return  count >= 1 ? R.ok() : R.fail();
     }
 }

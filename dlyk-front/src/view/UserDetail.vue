@@ -1,5 +1,5 @@
 <template>
-<!--  用户详情列表，该用户的信息是 ：{{userDetail}}-->
+  <el-button type="primary" @click="back">返回</el-button>
   <!--展示信息的表单-->
   <el-form ref="loginRefForm" :model="userDetail" label-width="120px">
     <!--id-->
@@ -9,6 +9,10 @@
     <!--账号-->
     <el-form-item label="账号">
       {{ userDetail.loginAct }}
+    </el-form-item>
+    <!--账号-->
+    <el-form-item label="密码">
+      {{ userDetail.loginPwd }}
     </el-form-item>
     <!--账号-->
     <el-form-item label="姓名">
@@ -59,9 +63,7 @@
     <el-form-item label="最近登录时间">
       {{ userDetail.lastLoginTime }}
     </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="back">返回</el-button>
-    </el-form-item>
+
   </el-form>
 </template>
 
@@ -74,6 +76,7 @@ export default{
       userDetail : {
         id : 0,
         loginAct : "",
+        loginPwd : "",
         name : "",
         phone : "",
         email : "",

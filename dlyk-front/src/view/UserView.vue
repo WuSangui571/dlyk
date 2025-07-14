@@ -1,5 +1,57 @@
 <template>
-  <el-button type="primary">新增用户</el-button>
+  <el-button type="primary"  @click="add">新增用户</el-button>
+  <!--新增用户的弹窗-->
+  <el-dialog v-model="userDialogVisible" title="新增用户" center width="45%" draggable>
+    <!--登录表单-->
+      <el-form ref="loginRefForm" :model="user" label-width="110px" :rules="userRules">
+        <el-form-item label="账号" prop="loginAct">
+          <el-input placeholder="请输入要新增的账号" v-model="user.loginAct"/>
+        </el-form-item>
+        <el-form-item label="密码" prop="loginPwd">
+          <el-input placeholder="请输入要新增的密码" v-model="user.loginPwd"/>
+        </el-form-item>
+        <el-form-item label="姓名" prop="name">
+          <el-input placeholder="请输入要新增的姓名" v-model="user.name"/>
+        </el-form-item>
+        <el-form-item label="电话" prop="phone">
+          <el-input placeholder="请输入要新增的电话" v-model="user.phone"/>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input placeholder="请输入要新增的邮箱" v-model="user.email"/>
+        </el-form-item>
+        <el-form-item label="账号未过期" prop="accountNoExpired">
+          <el-select v-model="user.accountNoExpired" placeholder="是" >
+            <el-option label="是" value="1"/>
+            <el-option label="否" value="0"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="密码未过期" prop="credentialsNoExpired">
+          <el-select v-model="user.credentialsNoExpired" placeholder="是">
+            <el-option label="是" value="1"/>
+            <el-option label="否" value="0"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="账号未锁定" prop="accountNoLocked">
+          <el-select v-model="user.accountNoLocked" placeholder="是">
+            <el-option label="是" value="1"/>
+            <el-option label="否" value="0"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="账号是否启用" prop="accountEnabled">
+          <el-select v-model="user.accountEnabled" placeholder="是">
+            <el-option label="是" value="1"/>
+            <el-option label="否" value="0"/>
+          </el-select>
+        </el-form-item>
+      </el-form>
+
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="userDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveAdd">提交</el-button>
+      </div>
+    </template>
+  </el-dialog>
   <el-button type="danger">批量删除</el-button>
   <el-table
       :data="userList"
@@ -32,12 +84,13 @@
       @prev-click = "getData"
       @next-click = "getData"
       @current-change = "getData"/>
-  <!--注意上面三个 getData 方法，方法里的 current 参数是 ele-plus 自动传过来要跳转的页码-->
+  <!--注意上面三个 getData 方法，方法里没有参数，但实际是有的，current 参数是 ele-plus 自动传过来要跳转的页码-->
 
 </template>
 <script lang="ts">
 import {defineComponent} from 'vue'
-import  {doGet} from "../http/HttpRequest.js";
+import {doGet, doPost} from "../http/HttpRequest.js";
+import {messageTip} from "../util/util";
 
 export default {
   data(){
@@ -46,12 +99,101 @@ export default {
       userList : [{}],
       total : 0,
       pageSize : 0,
+      // 新增用户弹窗，true 为弹，false 为不弹
+      userDialogVisible : false,
+      // 定义用户的属性
+      user : {
+        id : 0,
+        loginAct : "",
+        loginPwd : "",
+        name : "",
+        phone : "",
+        email : "",
+        accountNoExpired : "",
+        credentialsNoExpired : "",
+        accountNoLocked : "",
+        accountEnabled : "",
+        createTime : "",
+        createByDo : {
+          name : "",
+        },
+        editTime : "",
+        editByDo : {
+          name : "",
+        },
+        lastLoginTime : "",
+
+      },
+      // 定义用户的规则
+      userRules:{
+        loginAct : [
+          {required: true, message: '账号不能为空', trigger: 'blur'},
+        ],
+        loginPwd : [
+          {required: true, message: '密码不能为空', trigger: 'blur'},
+          {min: 3,max :10,message: '密码位数必须在3-10之间', trigger: 'blur'},
+        ],
+        name : [
+          {required: true, message: '姓名不能为空', trigger: 'blur'},
+          {pattern : /^[\u4e00-\u9fa5]{0,}$/, message: "姓名必须是中文", trigger: 'blur'}
+        ],
+        phone : [
+          {required: true, message: '电话不能为空', trigger: 'blur'},
+          {pattern : /^1[3-9]\d{9}$/, message: "手机格式有误", trigger: 'blur'}
+        ],
+        email : [
+          {required: true, message: '邮箱不能为空', trigger: 'blur'},
+          {pattern : /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "请输入正确的邮箱格式", trigger: 'blur'}
+        ],
+        accountNoExpired : [
+          {required: true, message: '请选择账号是否未过期', trigger: 'blur'},
+        ],
+        credentialsNoExpired : [
+          {required: true, message: '请选择密码是否未过期', trigger: 'blur'},
+        ],
+        accountNoLocked : [
+          {required: true, message: '请选择账号是否未锁定', trigger: 'blur'},
+        ],
+        accountEnabled : [
+          {required: true, message: '请选择账号是否启用', trigger: 'blur'},
+        ],
+      },
+
     }
   },
   mounted() {
     this.getData();
   },
   methods:{
+    // 保存添加，将新增的信息返回给后端
+    saveAdd(){
+      // 提交之前再进行一次验证
+      this.$refs.loginRefForm.validate((isValid) =>{
+        // 只有验证成功才能提交
+        if (isValid){
+          let formData = new FormData();
+          for (let item in this.user){
+            // 追加(字段名，字段值)
+            formData.append(item,this.user[item]);
+          }
+          doPost("/api/user",formData).then(resp =>{
+            console.log(resp)
+            if (resp.data.code === 200){
+              messageTip("提交成功！","success");
+            }else{
+              messageTip("提交失败！","error");
+            }
+          })
+        }
+      })
+
+    },
+    // 新增用户方法。
+    add(){
+      // 新增方法被调用之后，设置新增用户的弹窗为 true
+      this.userDialogVisible = true;
+    },
+
     // 勾选或取消勾选触发此事件
     handleSelectionChange(){
 
@@ -92,6 +234,10 @@ export default {
 
 
 <style scoped>
+
+.el-select{
+  width: 100%;
+}
 .el-pagination{
   /*设置上边距*/
   margin-top: 12px;
