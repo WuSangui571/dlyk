@@ -25,4 +25,12 @@ public interface UserService extends UserDetailsService {
      * @return 用户对象
      */
     TUser getUserById(Integer id);
+
+    /**
+     * 根据用户 id 查询用户信息，这里的 编辑人 和 创建人 ，是姓名而不是 id
+     * @param id 用户 id
+     * @return 用户对象
+     */
+    TUser getUserDetailById(Integer id);
+
 }

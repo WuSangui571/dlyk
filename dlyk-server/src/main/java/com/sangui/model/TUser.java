@@ -103,12 +103,12 @@ public class TUser implements UserDetails, Serializable {
     private List<String> permissionList;
 
     /**
-     * 一对一映射
+     * 一对一关联，创建人的 tUser 实体
      */
     private TUser createByDo;
 
     /**
-     * 
+     * 一对一关联，编辑人的 tUser 实体
      */
     private TUser editByDo;
 

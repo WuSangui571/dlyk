@@ -53,7 +53,8 @@ public class UserController {
 
     @GetMapping("/api/user/{id}")
     public R getUserDetail(@PathVariable(value = "id")  Integer id){
-        TUser tUser = userService.getUserById(id);
+        // TUser tUser = userService.getUserById(id);
+        TUser tUser = userService.getUserDetailById(id);
         return R.ok(tUser);
     }
 }

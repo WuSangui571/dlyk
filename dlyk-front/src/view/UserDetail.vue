@@ -44,7 +44,8 @@
     </el-form-item>
     <!--账号-->
     <el-form-item label="创建人">
-      {{ userDetail.createBy }}
+      <!--{{ userDetail.createBy }}-->
+      {{ userDetail.createByDo.name }}
     </el-form-item>
     <!--账号-->
     <el-form-item label="编辑时间">
@@ -52,13 +53,15 @@
     </el-form-item>
     <!--账号-->
     <el-form-item label="编辑人">
-      {{ userDetail.editBy }}
+      {{ userDetail.editByDo.name }}
     </el-form-item>
     <!--账号-->
     <el-form-item label="最近登录时间">
       {{ userDetail.lastLoginTime }}
     </el-form-item>
-    <el-button type="primary" @click="back">返回</el-button>
+    <el-form-item>
+      <el-button type="primary" @click="back">返回</el-button>
+    </el-form-item>
   </el-form>
 </template>
 
@@ -69,11 +72,25 @@ export default{
     return{
       // 用户详情是个对象
       userDetail : {
-        // id : 0,
-        // loginAct : "0",
+        id : 0,
+        loginAct : "",
+        name : "",
+        phone : "",
+        email : "",
+        accountNoExpired : 1,
+        credentialsNoExpired : 1,
+        accountNoLocked : 1,
+        accountEnabled : 1,
+        createTime : "",
+        createByDo : {
+          name : "",
+        },
+        editTime : "",
+        editByDo : {
+          name : "",
+        },
+        lastLoginTime : "",
       },
-
-      // id : 0,
     }
   },
   // 加载页面后使用以下的方法
@@ -88,11 +105,11 @@ export default{
     loadUserDetail(){
       // 通过 $route 查找参数 id，这里写的 id，要和动态路由里配置的动态路径相同
       let id = this.$route.params.id;
-      console.log("/api/user/" + id)
+      //console.log("/api/user/" + id)
       doGet("/api/user/" + id,{}).then(resp =>{
-        console.log(resp.data.code)
+        //console.log(resp.data.code)
         if (resp.data.code === 200){
-          console.log("my resp:" + resp)
+          //console.log("my resp:" + resp)
           this.userDetail = resp.data.data;
         }
       })
