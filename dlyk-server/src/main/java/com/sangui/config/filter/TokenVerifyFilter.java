@@ -8,7 +8,6 @@ import com.sangui.result.R;
 import com.sangui.service.RedisService;
 import com.sangui.util.JsonUtils;
 import com.sangui.util.JwtUtils;
-import com.sangui.util.JsonUtils;
 import com.sangui.util.ResponseUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
@@ -45,7 +44,7 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 如果是登录请求，此时还没有生成 jwt，那不需要对登录请求进行 jwt 验证
         if (request.getRequestURI().equals(LOGIN_URI)) {
-            //验证 jwt 通过了 ，让 Filter 链继续执行，也就是继续执行下一个Filter
+            //验证 jwt 通过了 ，让 Filter 链继续执行，也就是继续执行下一个 Filter
             filterChain.doFilter(request, response);
         } else {
             String token = null;
@@ -61,9 +60,9 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
                 // token 验证未通过的统一结果
                 R result = R.fail(CodeEnum.TOKEN_IS_EMPTY);
                 // 把 R 对象转成 json
-                String resultJSON = JsonUtils.toJson(result);
+                String resultJson = JsonUtils.toJson(result);
                 // 把 R 以 json 返回给前端
-                ResponseUtils.write(response, resultJSON);
+                ResponseUtils.write(response, resultJson);
                 return;
             }
 
@@ -72,9 +71,9 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
                 // token 验证未通过统一结果
                 R result = R.fail(CodeEnum.TOKEN_IS_ERROR);
                 // 把 R 对象转成 json
-                String resultJSON = JsonUtils.toJson(result);
+                String resultJson = JsonUtils.toJson(result);
                 //把 R 以 json 返回给前端
-                ResponseUtils.write(response, resultJSON);
+                ResponseUtils.write(response, resultJson);
                 return;
             }
 
@@ -85,10 +84,10 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
                 // token 验证未通过统一结果
                 R result = R.fail(CodeEnum.TOKEN_IS_EXPIRED);
 
-                //把 R 对象转成 json
+                // 把 R 对象转成 json
                 String resultJSON = JsonUtils.toJson(result);
 
-                //把 R 以 json返回给前端
+                // 把 R 以 json返回给前端
                 ResponseUtils.write(response, resultJSON);
 
                 return;
@@ -98,11 +97,11 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
                 // token 验证未通过的统一结果
                 R result = R.fail(CodeEnum.TOKEN_IS_NONE_MATCH);
 
-                //把R对象转成 json
-                String resultJSON = JsonUtils.toJson(result);
+                // 把 R 对象转成 json
+                String resultJson = JsonUtils.toJson(result);
 
-                //把 R 以 json 返回给前端
-                ResponseUtils.write(response, resultJSON);
+                // 把 R 以 json 返回给前端
+                ResponseUtils.write(response, resultJson);
                 return;
             }
 
@@ -110,7 +109,7 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(tUser, tUser.getLoginPwd(), tUser.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-            //刷新一下 token（异步处理）
+            // 刷新一下 token（异步处理）
             // 异步处理（更好的方式，使用线程池去执行）
             threadPoolTaskExecutor.execute(() -> {
                 // 刷新 token

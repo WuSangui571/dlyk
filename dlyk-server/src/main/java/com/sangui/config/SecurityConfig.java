@@ -41,7 +41,7 @@ public class SecurityConfig {
 
 
     @Resource
-    TokenVerifyFilter tokenVerifyFilter;
+    private TokenVerifyFilter tokenVerifyFilter;
 
     @Resource
     private MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
@@ -116,7 +116,7 @@ public class SecurityConfig {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
 
-                // 添加自定义 Filter
+                // 添加自定义 Filter，在 LoginFilter 之前
                 .addFilterBefore(tokenVerifyFilter, LogoutFilter.class)
 
                 // 退出登录

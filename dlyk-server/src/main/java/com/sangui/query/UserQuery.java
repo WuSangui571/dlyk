@@ -9,7 +9,7 @@ import lombok.Data;
  * @Version: 1.0
  */
 @Data
-public class UserQuery {
+public class UserQuery extends BaseQuery{
     /**
      * 主键，自动增长，用户ID
      */

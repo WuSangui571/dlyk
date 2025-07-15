@@ -1,14 +1,17 @@
 <template>
   <el-button type="primary"  @click="add">新增用户</el-button>
   <!--新增用户的弹窗-->
-  <el-dialog v-model="userDialogVisible" title="新增用户" center width="45%" draggable>
+  <el-dialog v-model="userDialogVisible" :title="user.id > 0 ?'编辑用户':'新增用户'" center width="45%" draggable>
     <!--登录表单-->
       <el-form ref="loginRefForm" :model="user" label-width="110px" :rules="userRules">
         <el-form-item label="账号" prop="loginAct">
           <el-input placeholder="请输入要新增的账号" v-model="user.loginAct"/>
         </el-form-item>
-        <el-form-item label="密码" prop="loginPwd">
-          <el-input placeholder="请输入要新增的密码" v-model="user.loginPwd"/>
+        <el-form-item label="密码" v-if="user.id > 0">
+          <el-input type="password" placeholder="密码为空值表示不修改密码" v-model="user.loginPwd"/>
+        </el-form-item>
+        <el-form-item label="密码" prop="loginPwd" v-else>
+          <el-input type="password" placeholder="请输入要新增的密码" v-model="user.loginPwd"/>
         </el-form-item>
         <el-form-item label="姓名" prop="name">
           <el-input placeholder="请输入要新增的姓名" v-model="user.name"/>
@@ -20,27 +23,43 @@
           <el-input placeholder="请输入要新增的邮箱" v-model="user.email"/>
         </el-form-item>
         <el-form-item label="账号未过期" prop="accountNoExpired">
-          <el-select v-model="user.accountNoExpired" placeholder="是" >
-            <el-option label="是" value="1"/>
-            <el-option label="否" value="0"/>
+          <el-select v-model="user.accountNoExpired" placeholder="请选择" >
+            <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="密码未过期" prop="credentialsNoExpired">
-          <el-select v-model="user.credentialsNoExpired" placeholder="是">
-            <el-option label="是" value="1"/>
-            <el-option label="否" value="0"/>
+          <el-select v-model="user.credentialsNoExpired" placeholder="请选择">
+            <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="账号未锁定" prop="accountNoLocked">
-          <el-select v-model="user.accountNoLocked" placeholder="是">
-            <el-option label="是" value="1"/>
-            <el-option label="否" value="0"/>
+          <el-select v-model="user.accountNoLocked" placeholder="请选择">
+            <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="账号是否启用" prop="accountEnabled">
-          <el-select v-model="user.accountEnabled" placeholder="是">
-            <el-option label="是" value="1"/>
-            <el-option label="否" value="0"/>
+          <el-select v-model="user.accountEnabled" placeholder="请选择">
+            <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
           </el-select>
         </el-form-item>
       </el-form>
@@ -93,6 +112,8 @@ import {doGet, doPost} from "../http/HttpRequest.js";
 import {messageTip} from "../util/util";
 
 export default {
+  // 注入父级页面提供的属性
+  inject: ['reload'],
   data(){
     return {
       // userList 是个数组，里面是对象
@@ -109,10 +130,10 @@ export default {
         name : "",
         phone : "",
         email : "",
-        accountNoExpired : "",
-        credentialsNoExpired : "",
-        accountNoLocked : "",
-        accountEnabled : "",
+        accountNoExpired : 1,
+        credentialsNoExpired : 1,
+        accountNoLocked : 1,
+        accountEnabled : 1,
         createTime : "",
         createByDo : {
           name : "",
@@ -158,7 +179,17 @@ export default {
           {required: true, message: '请选择账号是否启用', trigger: 'blur'},
         ],
       },
-
+      // 选择器
+      options :[
+        {
+          value: '1',
+          label: '是',
+        },
+        {
+          value: '0',
+          label: '否',
+        },
+      ],
     }
   },
   mounted() {
@@ -180,6 +211,9 @@ export default {
             console.log(resp)
             if (resp.data.code === 200){
               messageTip("提交成功！","success");
+              this.userDialogVisible = false;
+              // 重新载入
+              this.reload();
             }else{
               messageTip("提交失败！","error");
             }
@@ -190,6 +224,8 @@ export default {
     },
     // 新增用户方法。
     add(){
+      // 重置 user 里的数据
+      this.user = {}
       // 新增方法被调用之后，设置新增用户的弹窗为 true
       this.userDialogVisible = true;
     },
@@ -206,7 +242,6 @@ export default {
       }).then(resp => {
         if (resp.data.code === 200){
           this.userList = resp.data.data.list;
-            //console.log(resp.data.data);
             this.total = resp.data.data.total;
             this.pageSize = resp.data.data.pageSize
         }
@@ -220,7 +255,20 @@ export default {
     },
     // 编辑指定 id 的用户的信息
     edit(id){
+      this.userDialogVisible = true;
+      this.loadUser(id);
+    },
+    // 加载编辑用户时的信息
+    loadUser(id){
+      doGet("/api/user/" + id,{}).then((resp) =>{
+        //console.log(resp)
+        if (resp.data.code === 200){
+          this.user = resp.data.data;
+          this.user.loginPwd = "";
+        }else{
 
+        }
+      })
     },
     // 删除指定 id 的用户
     del(id){

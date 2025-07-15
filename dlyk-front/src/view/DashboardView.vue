@@ -124,7 +124,7 @@
       <!--中：网站主要信息-->
       <el-main>
         <!-- router-view 标签就是根据路由去显示的-->
-        <router-view/>
+        <router-view v-if="isRouterAlive"/>
       </el-main>
       <!--下：版权信息-->
       <el-footer>Copyright © 2025 三桂管理系统 All rights reserved. <a href="https://beian.miit.gov.cn/" target="_blank">浙ICP备2025167176号</a></el-footer>
@@ -146,8 +146,24 @@ export default defineComponent({
       // false 菜单不折叠。true 菜单折叠
       isCollapse: false,
       // 登录用户对象
-      user:{},
+      user:{
+        loginAct : "",
+      },
+      // 控制页面是否显示，这里设置的是主页面，true 显示，false 不显示
+      isRouterAlive : true,
       // name:""
+    }
+  },
+  provide(){
+    return {
+      // 提供一个箭头函数，局部刷新网页
+      reload: () =>{
+        this.isRouterAlive = false;
+        // $nextTick 的作用是，当数据更新了，在 dom 中渲染后，自动执行里面的函数
+        this.$nextTick(function (){
+          this.isRouterAlive = true;
+        })
+      }
     }
   },
   // vue 的生命周期中的一个函数钩子

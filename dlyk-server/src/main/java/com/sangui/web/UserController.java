@@ -57,7 +57,8 @@ public class UserController {
     }
 
     @PostMapping("/api/user")
-    public R addUser(@RequestBody UserQuery userQuery){
+    public R addUser(UserQuery userQuery, @RequestHeader(value = "Authorization")String token){
+        userQuery.setToken(token);
         int count = userService.saveUser(userQuery);
         return  count >= 1 ? R.ok() : R.fail();
     }

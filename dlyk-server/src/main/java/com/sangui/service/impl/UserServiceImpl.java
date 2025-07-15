@@ -8,14 +8,21 @@ import com.sangui.model.TUser;
 import com.sangui.model.TUserRole;
 import com.sangui.query.UserQuery;
 import com.sangui.service.UserService;
+import com.sangui.util.JwtUtils;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.util.Date;
 import java.util.List;
 
 import static com.sangui.constant.Constants.PAGE_SIZE;
@@ -28,6 +35,9 @@ import static com.sangui.constant.Constants.PAGE_SIZE;
  */
 @Service
 public class UserServiceImpl implements UserService {
+    @Resource
+    public PasswordEncoder passwordEncoder;
+
     @Resource
     TUserMapper tUserMapper;
 
@@ -45,6 +55,13 @@ public class UserServiceImpl implements UserService {
         // 把 userQuery 里边的属性数据复制到上面的 tUser 对象里边去
         // 使用 Spring 的一个工具类 BeanUtils.copy 就可以实现（要求两个对象的属性名要相同，属性类要相同）
         BeanUtils.copyProperties(userQuery,tUser);
+        // 进行密码加密
+        tUser.setLoginPwd(passwordEncoder.encode(userQuery.getLoginPwd()));
+        // 添加创建时间
+        tUser.setCreateTime(new Date());
+        // 添加创建人 id（即当前登录人的 id）
+        Integer loginUserId = JwtUtils.parseUserFromJWT(userQuery.getToken()).getId();
+        tUser.setCreateBy(loginUserId);
 
         return tUserMapper.insertSelective(tUser);
     }
