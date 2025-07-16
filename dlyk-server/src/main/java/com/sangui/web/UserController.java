@@ -60,6 +60,13 @@ public class UserController {
     public R addUser(UserQuery userQuery, @RequestHeader(value = "Authorization")String token){
         userQuery.setToken(token);
         int count = userService.saveUser(userQuery);
-        return  count >= 1 ? R.ok() : R.fail();
+        return count >= 1 ? R.ok() : R.fail();
+    }
+
+    @PutMapping("/api/user")
+    public R updateUser(UserQuery userQuery, @RequestHeader(value = "Authorization")String token){
+        userQuery.setToken(token);
+        int count = userService.updateUser(userQuery);
+        return count >= 1 ? R.ok() : R.fail();
     }
 }

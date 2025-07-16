@@ -41,4 +41,11 @@ public interface UserService extends UserDetailsService {
      * @return 改变数据库的条数
      */
     int saveUser(UserQuery userQuery);
+
+    /**
+     * 修改用户
+     * @param userQuery 前端传给后端的 user 对象
+     * @return 改变数据库的条数
+     */
+    int updateUser(UserQuery userQuery);
 }

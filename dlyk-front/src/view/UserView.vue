@@ -108,7 +108,7 @@
 </template>
 <script lang="ts">
 import {defineComponent} from 'vue'
-import {doGet, doPost} from "../http/HttpRequest.js";
+import {doGet, doPost, doPut} from "../http/HttpRequest.js";
 import {messageTip} from "../util/util";
 
 export default {
@@ -182,11 +182,11 @@ export default {
       // 选择器
       options :[
         {
-          value: '1',
+          value: 1,
           label: '是',
         },
         {
-          value: '0',
+          value: 0,
           label: '否',
         },
       ],
@@ -207,17 +207,34 @@ export default {
             // 追加(字段名，字段值)
             formData.append(item,this.user[item]);
           }
-          doPost("/api/user",formData).then(resp =>{
-            console.log(resp)
-            if (resp.data.code === 200){
-              messageTip("提交成功！","success");
-              this.userDialogVisible = false;
-              // 重新载入
-              this.reload();
-            }else{
-              messageTip("提交失败！","error");
-            }
-          })
+          // 判断当前提交的用户是否有 id (是否有 id 表示区分该请求是编辑用户操作(true)，还是新增用户操作(false))
+          if (this.user.id > 0){
+            // 这里是编辑用户分支
+            doPut("/api/user",formData).then(resp =>{
+              console.log(resp)
+              if (resp.data.code === 200){
+                messageTip("编辑成功！","success");
+                this.userDialogVisible = false;
+                // 重新载入
+                this.reload();
+              }else{
+                messageTip("编辑失败！","error");
+              }
+            })
+          }else {
+            // 这里是新增用户分支
+            doPost("/api/user",formData).then(resp =>{
+              console.log(resp)
+              if (resp.data.code === 200){
+                messageTip("提交成功！","success");
+                this.userDialogVisible = false;
+                // 重新载入
+                this.reload();
+              }else{
+                messageTip("提交失败！","error");
+              }
+            })
+          }
         }
       })
 

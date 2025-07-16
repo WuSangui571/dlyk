@@ -88,4 +88,21 @@ public class UserServiceImpl implements UserService {
         // 返回正确的 tUser
         return tUser;
     }
+
+    @Override
+    public int updateUser(UserQuery userQuery) {
+        TUser tUser = new TUser();
+        BeanUtils.copyProperties(userQuery,tUser);
+        // 若账号被修改（即账号不为空）
+        if (userQuery.getLoginPwd() != null) {
+            tUser.setLoginPwd(passwordEncoder.encode(userQuery.getLoginPwd()));
+        }
+        // 加入修改人信息
+        Integer loginUserId = JwtUtils.parseUserFromJWT(userQuery.getToken()).getId();
+        tUser.setEditBy(loginUserId);
+        // 加入修改时间
+        tUser.setEditTime(new Date());
+        // 在数据库中修改
+        return tUserMapper.updateByPrimaryKeySelective(tUser);
+    }
 }
