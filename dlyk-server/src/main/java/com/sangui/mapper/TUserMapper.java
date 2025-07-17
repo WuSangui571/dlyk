@@ -25,4 +25,6 @@ public interface TUserMapper {
     TUser selectByLoginAct(String username);
 
     List<TUser> selectUserByPage();
+
+    int batchDelete(String ids);
 }

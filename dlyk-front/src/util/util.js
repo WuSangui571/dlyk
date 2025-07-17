@@ -43,12 +43,13 @@ export function removeToken(){
 /**
  * 消息确认函数
  * @param msg 消息信息详情
+ * @param title 消息标题
  * @returns {Promise<MessageBoxData>}
  */
-export function messageConfirm(msg){
+export function messageConfirm(msg,title){
     return ElMessageBox.confirm(
         msg,
-        'Warning',
+        title,
         {
             confirmButtonText: '确认',
             cancelButtonText: '取消',

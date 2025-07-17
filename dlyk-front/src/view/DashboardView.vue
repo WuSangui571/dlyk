@@ -109,7 +109,7 @@
         <el-icon class="switch-button" @click="showMenu"><Switch /></el-icon>
         <el-dropdown :hide-on-click="false">
           <span class="el-dropdown-link">
-            {{ user.loginAct }}
+            {{ user.name }}
             <el-icon class="el-icon--right"><arrow-down/></el-icon>
           </span>
           <template #dropdown>
@@ -147,7 +147,7 @@ export default defineComponent({
       isCollapse: false,
       // 登录用户对象
       user:{
-        loginAct : "",
+        name : "",
       },
       // 控制页面是否显示，这里设置的是主页面，true 显示，false 不显示
       isRouterAlive : true,
@@ -190,7 +190,7 @@ export default defineComponent({
           messageTip("退出成功","success")
           window.location.href = "/"
         } else {
-          messageConfirm("退出异常，是否强制退出？").then(() =>{
+          messageConfirm("退出异常，是否强制退出？","提示").then(() =>{
             removeToken();
             window.location.href = "/"
           }).catch(() =>{

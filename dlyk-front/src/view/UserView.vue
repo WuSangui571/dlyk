@@ -71,7 +71,7 @@
       </div>
     </template>
   </el-dialog>
-  <el-button type="danger">批量删除</el-button>
+  <el-button type="danger" @click="batchDel">批量删除</el-button>
   <el-table
       :data="userList"
       row-key="id"
@@ -108,8 +108,8 @@
 </template>
 <script lang="ts">
 import {defineComponent} from 'vue'
-import {doGet, doPost, doPut} from "../http/HttpRequest.js";
-import {messageTip} from "../util/util";
+import {doDelete, doGet, doPost, doPut} from "../http/HttpRequest.js";
+import {messageConfirm, messageTip, removeToken} from "../util/util";
 
 export default {
   // 注入父级页面提供的属性
@@ -143,7 +143,6 @@ export default {
           name : "",
         },
         lastLoginTime : "",
-
       },
       // 定义用户的规则
       userRules:{
@@ -190,6 +189,8 @@ export default {
           label: '否',
         },
       ],
+      // 定义用户 id 的数组
+      ids : [],
     }
   },
   mounted() {
@@ -246,10 +247,16 @@ export default {
       // 新增方法被调用之后，设置新增用户的弹窗为 true
       this.userDialogVisible = true;
     },
-
-    // 勾选或取消勾选触发此事件
-    handleSelectionChange(){
-
+    // 勾选或取消勾选触发此事件，ele-plus 会自动将勾选的数组放入该函数的参数里，这个参数名字随意
+    handleSelectionChange(idArray){
+      this.ids = []
+      // console.log(idArray)
+      idArray.forEach(item =>{
+        let userId = item.id;
+        // 将 id push 到 id 数组里
+        this.ids.push(userId);
+      })
+      //alert(this.ids)
     },
     // 获取表格 Data 的函数
     getData(current){
@@ -283,14 +290,52 @@ export default {
           this.user = resp.data.data;
           this.user.loginPwd = "";
         }else{
-
         }
       })
     },
     // 删除指定 id 的用户
     del(id){
-
+      messageConfirm("确定删除吗？","系统提醒").then(() =>{
+        // 确定删除
+        doDelete("/api/user/" + id,{}).then((resp) => {
+          if (resp.data.code === 200){
+            messageTip("删除成功!","success");
+            this.reload();
+          }else {
+            messageTip("删除失败!失败原因：" + resp.data.msg ,"error");
+          }
+        })
+      }).catch(() =>{
+        // 取消删除
+        messageTip("已取消删除","primary");
+      })
     },
+    // 批量删除用户
+    batchDel(){
+      let count = this.ids.length
+      if (count == 0){
+        messageTip("未有任何数据勾选","warning")
+        return;
+      }
+      messageConfirm("确定删除这" + count + "条数据吗？","系统提示").then(() =>{
+        // 确定删除
+        // 整理提交的参数
+        // 从数组 [1,3,4,6] 会变成 "1,3,4,6" 这样的字符串
+        let ids = this.ids.join(",")
+        doDelete("/api/user",{ids : ids}).then(resp =>{
+          console.log(resp)
+          if (resp.data.code === 200){
+            messageTip("批量删除成功！","success")
+            this.reload();
+          }else {
+            messageTip("批量删除失败!失败原因：" + resp.data.msg ,"error")
+          }
+        });
+      }).catch(() =>{
+        // 取消删除
+        messageTip("已取消删除","warning")
+      })
+    }
 
   }
 }

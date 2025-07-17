@@ -48,4 +48,13 @@ public interface UserService extends UserDetailsService {
      * @return 改变数据库的条数
      */
     int updateUser(UserQuery userQuery);
+
+    int deleteById(Integer id);
+
+    /**
+     * 批量删除
+     * @param ids  如：“1，2，4，5”
+     * @return 改变数据库的条数
+     */
+    int batchDeleteByIds(String ids);
 }

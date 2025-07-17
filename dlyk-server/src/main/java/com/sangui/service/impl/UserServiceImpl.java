@@ -105,4 +105,14 @@ public class UserServiceImpl implements UserService {
         // 在数据库中修改
         return tUserMapper.updateByPrimaryKeySelective(tUser);
     }
+
+    @Override
+    public int deleteById(Integer id) {
+        return tUserMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public int batchDeleteByIds(String ids) {
+        return tUserMapper.batchDelete(ids);
+    }
 }

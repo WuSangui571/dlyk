@@ -80,6 +80,11 @@
     where login_act = #{username,jdbcType=VARCHAR}
   </select>
 
+  <delete id="batchDelete" parameterType="java.lang.String">
+    delete from t_user
+    where id in (${ids,jdbcType=VARCHAR})
+  </delete>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_user
     where id = #{id,jdbcType=INTEGER}

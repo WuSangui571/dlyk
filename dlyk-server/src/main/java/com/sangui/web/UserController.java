@@ -69,4 +69,16 @@ public class UserController {
         int count = userService.updateUser(userQuery);
         return count >= 1 ? R.ok() : R.fail();
     }
+
+    @DeleteMapping("/api/user/{id}")
+    public R deleteUser(@PathVariable(value = "id")  Integer id){
+        int count = userService.deleteById(id);
+        return count >= 1 ? R.ok() : R.fail();
+    }
+
+    @DeleteMapping("/api/user")
+    public R deleteUser(@RequestParam(value = "ids") String ids){
+        int count = userService.batchDeleteByIds(ids);
+        return count >= 1 ? R.ok() : R.fail();
+    }
 }

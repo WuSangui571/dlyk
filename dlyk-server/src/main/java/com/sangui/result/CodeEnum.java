@@ -19,6 +19,8 @@ public enum CodeEnum {
     TOKEN_IS_EXPIRED(903,"登录请求 Token 已过期"),
     TOKEN_IS_NONE_MATCH(904,"登录请求 Token 不匹配"),
     USER_LOGOUT(200, "退出成功"),
+    DATA_ACCESS_EXCEPTION(500,"数据库操作失败"),
+    ACCESS_DENIED(500,""),
     ;
 
     /**
